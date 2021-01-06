@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mappers.insitemlistMapper">
+
+	<update id="insamtplus">
+		update itemlist
+		set
+			stockamt = stockamt + #{stockamt}
+		where itemcd = #{itemcd}
+	</update>
+	
+	<insert id="insert">
+		insert into initemlist
+			values
+			(
+				#{itemcd}
+				,(select
+					concat('II',lpad(nvl(max(substr(insitemlistcd,3,10)) + 1, 0),8 ,0))
+					from INITEMLIST			
+				  )
+				 ,#{insamt}
+				 ,sysdate
+				 ,'관리자'
+			)
+	</insert>
+	
+		<select id="list" resultType="vo.ItemListVO"> 
+		SELECT 
+			I.itemcd
+			,I.itemname
+			,I.madenmcd
+			,C.cdname madename
+			,I.itemunitcd
+			,CD.cdname itemunit
+			,I.stockamt
+			,I.stockyn
+			,I.useyn
+			,I.itemclscd
+			,INI.insamt
+			,INI.insitemlistcd
+		FROM ITEMLIST 
+		INNER JOIN INITEMLIST INI
+				ON(INI.ITEMCD = I.ITEMCD)
+		INNER JOIN CODEMNG C
+				ON(C.CDNO = I.MADENMCD)
+		INNER JOIN CODEMNG CD
+				ON(CD.CDNO = I.ITEMUNITCD)
+		where INI.INSDATE IN (select to_char(sysdate) from dual)
+		order by itemcd desc 
+		</select>
+	
+	<update id="insupdate">
+		update initemlist
+		set
+			insamt = #{insamt}
+		where itemcd = #{itemcd} 
+			and insitemlistcd = #{insitemlistcd}
+	</update>
+	
+	<update id="totalupdate">
+		update itemlist
+		set
+			stockamt = stockamt + #{insamt} - #{beforeinsamt}
+		where itemcd = #{itemcd}
+	</update>
+
+</mapper>
+
+
+
+

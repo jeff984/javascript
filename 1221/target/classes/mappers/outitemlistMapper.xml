@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mappers.outitemlistMapper">
+	<select id="list" resultType="vo.OutItemListVO">
+		SELECT 
+			a.ITEMCD
+			,c.cdname madename
+			,a.DELIVAMT
+			,a.CHECKYN
+			,a.DELIVYN 
+			,a.outitemlistcd
+			,a.delivno
+			,a.delivcorpcd
+			,code.cdname delivcor
+			,b.ITEMNAME
+			,b.madenmcd
+			,co.cdname itemunit
+			,d.id
+			,cod.cdname relname
+			,d.addrcd
+			,d.addrname
+			,d.mobiletelno
+			,d.hometelno
+			,e.name
+			,d.userinfodetailcd
+		from outitemlist a
+		inner join itemlist b
+				on(a.itemcd = b.itemcd)
+		inner join codemng c
+				on(c.cdno = b.madenmcd)			
+		inner join codemng co
+				on(co.cdno = b.itemunitcd)
+		inner join userinfodetail d
+				on(a.userinfodetailcd = d.userinfodetailcd)
+		inner join codemng cod
+				on(cod.cdno = d.RELCD)
+		inner join userinfo e
+				on(d.id = e.id)	
+		inner join codemng code
+				on(code.cdno = a.delivcorpcd)
+		order by a.insdate desc
+	</select>
+	
+	<insert id="insert">
+		insert into outitemlist
+				(
+					ITEMCD
+					,USERINFODETAILCD
+					,OUTITEMLISTCD
+					,DELIVAMT
+					,CHECKUSER
+					,CHECKDATE
+					,CHECKYN
+					,DELIVYN
+					,DELIVCORPCD
+					,DELIVNO
+					,INSUSER
+					,INSDATE 
+				)
+				values
+				(
+					#{itemcd}
+					,#{userinfodetailcd}
+					,(select
+						concat('OI',lpad(nvl(max(substr(outitemlistcd,3,10)) + 1, 0),8 ,0))
+						from outitemlist)	
+					,#{delivamt}
+					,'DaeYong'
+					,sysdate
+					,#{checkyn}
+					,#{delivyn}
+					,#{delivcorpcd}
+					,#{delivno}
+					,'admin'
+					,sysdate
+				)
+	</insert>
+	<!-- insert할 필요 없음 -->
+	
+	<update id="update">
+		update itemlist 
+			SET
+		stockamt = stockamt - #{delivamt}
+		where itemcd = #{itemcd}
+	</update>
+	
+	
+	
+	
+	
+	
+
+</mapper>

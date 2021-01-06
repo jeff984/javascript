@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mappers.codemngMapper">
+
+	
+	<select id="list" resultType="vo.CodeMngVO">
+		SELECT 
+			CDNO
+			,CDLVL
+			,UPCD
+			,CDNAME
+			,USEYN
+		FROM CODEMNG
+		START WITH CDNO = 'C0000'
+		CONNECT BY UPCD   = PRIOR CDNO
+ 		ORDER BY UPCD ASC, CDNO ASC
+		
+	</select>
+
+	<select id="detail" resultType="vo.CodeMngVO">
+		select
+				CDNO
+				,CDLVL
+				,UPCD
+				,CDNAME
+				,INSUSER
+				,INSDATE
+				,USEYN
+			from codemng
+			where cdno = #{cdno}
+	</select>
+	
+	<select id="newcode" resultType="String">
+		select
+				concat(
+						'C'
+						,lpad(
+								nvl(
+										max(substr(cdno,2,5))+1,0
+									)
+								,4,0
+							  )
+						)
+			from codemng
+
+	
+	</select>
+	
+	<insert id="insert">
+		insert into codemng
+			values
+			(
+				#{cdno}
+				,#{cdlvl}
+				,#{upcd}
+				,#{cdname}
+				,'관리자'
+				,sysdate
+				,#{useyn}
+			)
+	</insert>
+	
+	<update id="update">
+		update codemng
+		set
+			cdlvl = #{cdlvl}
+			,upcd = #{upcd}
+			,cdname = #{cdname}
+			,useyn = #{useyn}
+		where cdno = #{cdno}
+	</update>
+	
+
+	
+
+
+
+
+
+
+
+</mapper>

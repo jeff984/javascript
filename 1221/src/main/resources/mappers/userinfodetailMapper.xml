@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mappers.userinfodetailMapper">
+
+	<insert id="insert">
+		insert into userinfodetail
+			(
+				id
+				,userinfodetailcd
+				,mobiletelno
+				,hometelno
+				,delivname
+				,addrcd
+				,addrname
+				,relcd
+				,insdate
+				,insuser
+				,useyn
+			)
+			values
+			(
+				#{id}	
+				,(select
+					DISTINCT
+					CONCAT
+					(
+						'U'
+						,lpad(
+								nvl(
+										max(substr(userinfodetailcd,2,8))+1,0
+									)
+								,8,0
+							 )
+					)
+					from userinfodetail
+				)
+				,#{mobiletelno}
+				,#{hometelno}
+				,#{delivname}
+				,#{addrcd}
+				,#{addrname}
+				,#{relcd}
+				,sysdate
+				,'신규가입자'
+				,#{useyn}
+			)
+	</insert>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</mapper>

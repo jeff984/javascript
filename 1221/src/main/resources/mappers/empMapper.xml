@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mappers.empMapper">
+	<select id="list" resultType="vo.EmpVO">
+	select
+			ename
+			,comm
+			,hiredate
+			,empno
+			,mgr
+			,job
+			,deptno
+			,sal
+		from EMP
+	</select>
+
+	<select id="detail" resultType="vo.UserInfoVO">
+		select
+				id
+				,pass
+				,name
+				,insdate
+				,useyn
+			from userinfo
+			where id = #{id}
+	</select>
+	
+	<insert id="insert">
+		insert into userinfo
+			(
+				id
+				,pass
+				,name
+				,insdate
+				,useyn
+				
+			)
+			values
+			(
+				#{id}
+				,#{pass}
+				,#{name}
+				,sysdate
+				,'Y'
+			)
+	
+	</insert>
+	
+	
+	
+	
+
+</mapper>

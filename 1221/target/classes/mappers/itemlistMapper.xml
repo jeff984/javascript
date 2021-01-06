@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mappers.itemlistMapper">
+
+	<select id="list" resultType="vo.ItemListVO">
+		SELECT I.itemcd,
+					I.itemname,
+					I.madenmcd,
+					C.cdname madename,   
+					I.itemunitcd,
+					CD.cdname itemunit,
+					I.stockamt,
+					I.stockyn,
+					I.useyn,
+					I.itemclscd
+				FROM ITEMLIST I
+				INNER JOIN CODEMNG C 
+					ON(C.CDNO = I.MADENMCD)
+				INNER JOIN CODEMNG CD 
+					ON(CD.CDNO = I.ITEMUNITCD)
+				WHERE I.itemclscd = #{itemclscd}
+				ORDER BY I.ITEMCLSCD
+	</select>
+	
+	<select id="newitemcd" resultType="String">
+		select 
+				concat('I',lpad( nvl( max( substr(itemcd,2,5)) + 1, 0), 4, 0))
+			from itemlist	
+	</select>
+	
+	<select id="categorylist" resultType="vo.CodeMngVO">
+		select
+				*
+			from codemng
+			where upcd = #{upcd}
+	</select>
+	
+	<insert id="insert">
+		insert into itemlist
+			values
+			(
+				#{itemcd}
+				,#{itemname}
+				,#{madenmcd}
+				,#{itemunitcd}
+				,100
+				,'Y'
+				,'관리자'
+				,sysdate
+				,#{useyn}
+				,#{itemclscd}
+			)
+	
+	</insert>
+	
+	<update id="update">
+		update itemlist
+		set
+			itemname=#{itemname}
+			,madenmcd = #{madenmcd}
+			,itemunitcd = #{itemunitcd}
+			,useyn = #{useyn}
+		where itemcd = #{itemcd}
+	
+	
+	</update>
+	
+	
+	
+	
+	
+	
+
+
+</mapper>
